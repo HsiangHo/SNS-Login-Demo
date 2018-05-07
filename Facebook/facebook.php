@@ -60,8 +60,8 @@ if (isset($accessToken)) {
     echo "<img src='$image' /><br><br>";
 
     $linkData = [
-        'link' => 'https://www.iboysoft.com',
-        'message' => 'iBoysoft data recovery',
+        'link' => 'https://github.com/hsiangho',
+        'message' => 'My first post',
     ];
 
     try {
