@@ -1,0 +1,105 @@
+<html>
+<head>
+    <meta name="google-signin-client_id" content="186390223134-lf4pe6o39rknsjg1557crsdaho41jdks.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/client:platform.js?onload=renderButton" async defer></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+
+<script>
+    function onSuccess(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        gapi.client.load('plus', 'v1', function () {
+            var request = gapi.client.plus.people.get({
+                'userId': 'me'
+            });
+            //Display the user details
+            request.execute(function (resp) {
+                var profileHTML = '<div class="profile"><div class="head">Welcome '+resp.name.givenName+'! <a href="javascript:void(0);" onclick="signOut();">Sign out</a></div>';
+                profileHTML += '<img src="'+resp.image.url+'"/><div class="proDetails"><p>'+resp.displayName+'</p><p>'+resp.emails[0].value+'</p><p>'+resp.gender+'</p><p>'+resp.id+'</p><p><a href="'+resp.url+'">View Google+ Profile</a></p></div></div>';
+                $('.userContent').html(profileHTML);
+                $('#gSignIn').slideUp('slow');
+            });
+
+            var request = gapi.client.plus.activities.list({
+                'userId' : 'me',
+                'collection' : 'public'
+            });
+
+            request.execute(function(resp) {
+                console.log(resp);
+                var numItems = resp.items.length;
+                for (var i = 0; i < numItems; i++) {
+                    console.log('url: ' + resp.items[i].url);
+                }
+            });
+
+//            var request = gapi.client.plus.activities.search({
+//                'query' : 'webniraj'
+//            });
+//
+//            request.execute(function(resp) {
+//                var numItems = resp.items.length;
+//                for (var i = 0; i < numItems; i++) {
+//                    console.log('ID: ' + resp.items[i].id + ' Content: ' +
+//                        resp.items[i].object.content);
+//                }
+//            });
+//            var request = gapi.client.plus.activities.get({ 'activityId' : 'z13yhrtpzu2kipczh04cfj1qxsuvylaoimg0k' });
+//
+//            request.execute(function(resp) {
+//                console.log('Used get to fetch activity with ID: ' + resp.id);
+//                console.log('Activity content: ' + resp.object.content);
+//                console.log('+1s: ' + resp.object.plusoners.totalItems);
+//                console.log('Number of comments: ' + resp.object.replies.totalItems);
+//            });
+        });
+    }
+    function onFailure(error) {
+        alert(error);
+    }
+    function renderButton() {
+        gapi.signin2.render('gSignIn', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSuccess,
+            'onfailure': onFailure
+        });
+    }
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            $('.userContent').html('');
+            $('#gSignIn').slideDown('slow');
+        });
+    }
+    function getActivityID() {
+        gapi.client.load('plus', 'v1', function () {
+            var request = gapi.client.plus.activities.list({
+                'userId' : 'me',
+                'collection' : 'public'
+            });
+
+            request.execute(function(resp) {
+                console.log(resp);
+                var numItems = resp.items.length;
+                for (var i = 0; i < numItems; i++) {
+                    console.log('url: ' + resp.items[i].url);
+                }
+            });
+        });
+    }
+</script>
+
+<body>
+<!-- HTML for render Google Sign-In button -->
+<div id="gSignIn"></div>
+<!-- HTML for displaying user details -->
+<div class="userContent"></div>
+<!-- HTML for displaying user details -->
+<div class="g-plus" data-action="share" data-href="https://github.com/hsiangho" data-onendinteraction="trackShare" data-onclick="trackShare"></div>
+
+</body>
+</html>
